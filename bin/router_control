@@ -68,7 +68,6 @@ module RouterControl
     c.action do |_global_options, options, args|
       destination_ip = args[0]
       netmask_length = args[1].to_i
-      next_hop = args[2]
       Trema.trema_process('SimpleRouter', options[:socket_dir]).controller.delete_entry_from_routing_table(destination_ip, netmask_length)
     end
   end

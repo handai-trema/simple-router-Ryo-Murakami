@@ -89,6 +89,34 @@ class SimpleRouter < Trema::Controller
   end
   # rubocop:enable MethodLength
 
+	def print_routing_talbe()
+		return @routing_table.getDB
+	end
+
+	def add_entry_for_routing_table(destination_ip, netmask_length, next_hop)
+		options = {:destination => destination_ip, :netmask_length => netmask_length, :next_hop => next_hop}
+		@routing_table.add(options)
+	end
+
+	def delete_entry_from_routing_table(destination_ip, netmask_length)
+		options = {:destination => destination_ip, :netmask_length => netmask_length}
+		@routing_table.delete(options)
+	end
+
+	def print_interface()
+		ret = Array.new()
+		Interface.all.each do |each|
+			ret << {:port_number => each.port_number, :mac_address => each.mac_address.to_s, :ip_address => each.ip_address.value.to_s, :netmask_length => each.netmask_length}
+		end
+		return ret
+	end
+
+	def find_next_hop(destination)
+		destination_ip = IPv4Address.new(destination)
+		tmp = @routing_table.lookup(destination_ip).to_s
+		return tmp if tmp
+	end
+
   private
 
   def sent_to_router?(packet_in)
@@ -173,19 +201,5 @@ class SimpleRouter < Trema::Controller
                     raw_data: arp_request.to_binary,
                     actions: SendOutPort.new(interface.port_number))
   end
-
-	def print_routing_talbe()
-		return @routing_table.getDB
-	end
-
-	def add_entry_for_routing_table(destination_ip, netmask_length, next_hop)
-		options = {:destination => destination_ip, :netmask_length => netmask_length, :next_hop => next_hop}
-		@routing_table.add(options)
-	end
-
-	def delete_entry_from_routing_table(destination_ip, netmask_length)
-		options = {:destination => destination_ip, :netmask_length => netmask_length}
-		@routing_table.delete(options)
-	end
 end
 # rubocop:enable ClassLength

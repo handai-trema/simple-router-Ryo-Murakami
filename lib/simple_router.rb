@@ -173,5 +173,19 @@ class SimpleRouter < Trema::Controller
                     raw_data: arp_request.to_binary,
                     actions: SendOutPort.new(interface.port_number))
   end
+
+	def print_routing_talbe()
+		return @routing_table.getDB
+	end
+
+	def add_entry_for_routing_table(destination_ip, netmask_length, next_hop)
+		options = {:destination => destination_ip, :netmask_length => netmask_length, :next_hop => next_hop}
+		@routing_table.add(options)
+	end
+
+	def delete_entry_from_routing_table(destination_ip, netmask_length)
+		options = {:destination => destination_ip, :netmask_length => netmask_length}
+		@routing_table.delete(options)
+	end
 end
 # rubocop:enable ClassLength

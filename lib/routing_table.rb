@@ -23,4 +23,22 @@ class RoutingTable
     end
     nil
   end
+
+	def delete(options)
+		netmask_length = options.fetch(:netmask_length)
+		prefix = IPv4Address.new(options.fetch(:destination)).mask(netmask_length)
+		@db[netmask_length].delete(prefix.to_i)
+	end
+
+  def getDB()
+    ret = Array.new()
+    @db.each do |each|
+      tmp = Hash.new()
+			each.each do |key, value|
+				tmp[IPv4Address.new(key).to_s] = value.to_s
+			end
+			ret << tmp
+		end
+		return tmp
+  end
 end
